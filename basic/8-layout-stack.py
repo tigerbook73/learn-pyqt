@@ -7,7 +7,6 @@ import sys
 
 
 class Color(QWidget):
-
     def __init__(self, color, *args, **kwargs):
         super(Color, self).__init__(*args, **kwargs)
         self.setAutoFillBackground(True)
@@ -16,11 +15,11 @@ class Color(QWidget):
         palette.setColor(QPalette.Window, QColor(color))
         self.setPalette(palette)
 
+
 # Subclass QMainWindow to customise your application's main window
 
 
 class MainWindow(QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -28,12 +27,12 @@ class MainWindow(QMainWindow):
 
         layout = QStackedLayout()
 
-        layout.addWidget(Color('red'))
-        layout.addWidget(Color('green'))
-        layout.addWidget(Color('blue'))
-        layout.addWidget(Color('yellow'))
+        layout.addWidget(Color("red"))
+        layout.addWidget(Color("green"))
+        layout.addWidget(Color("blue"))
+        layout.addWidget(Color("yellow"))
 
-        layout.setCurrentIndex(3)
+        layout.setCurrentIndex(2)
 
         widget = QWidget()
         widget.setLayout(layout)

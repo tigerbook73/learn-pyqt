@@ -1,11 +1,22 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QLabel, QMainWindow, QToolBar, QAction, QStatusBar, QCheckBox, QDialog, QDialogButtonBox, QHBoxLayout, QVBoxLayout
+from PyQt5.QtWidgets import (
+    QApplication,
+    QLabel,
+    QMainWindow,
+    QToolBar,
+    QAction,
+    QStatusBar,
+    QCheckBox,
+    QDialog,
+    QDialogButtonBox,
+    QHBoxLayout,
+    QVBoxLayout,
+)
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtGui import QIcon
 
 
 class CustomDialog(QDialog):
-
     def __init__(self, *args, **kwargs):
         super(CustomDialog, self).__init__(*args, **kwargs)
 
@@ -21,13 +32,13 @@ class CustomDialog(QDialog):
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
+
 #
 # Subclass QMainWindow to customise your application's main window
 #
 
 
 class MainWindow(QMainWindow):
-
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
 
@@ -44,7 +55,8 @@ class MainWindow(QMainWindow):
         self.addToolBar(toolbar)
 
         button_action = QAction(
-            QIcon("fugue-icons/icons/address-book-blue.png"), "Your button", self)
+            QIcon("fugue-icons/icons/address-book-blue.png"), "Your button", self
+        )
         button_action.setStatusTip("This is your button")
         button_action.triggered.connect(self.onMyToolBarButtonClick)
         button_action.setCheckable(True)
@@ -53,7 +65,8 @@ class MainWindow(QMainWindow):
         toolbar.addSeparator()
 
         button_action2 = QAction(
-            QIcon("fugue-icons/icons/address-book.png"), "Your button2", self)
+            QIcon("fugue-icons/icons/address-book.png"), "Your button2", self
+        )
         button_action2.setStatusTip("This is your button2")
         button_action2.triggered.connect(self.onMyToolBarButtonClick)
         button_action2.setCheckable(True)

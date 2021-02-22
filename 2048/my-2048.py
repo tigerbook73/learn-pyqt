@@ -1,22 +1,73 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import (
+    QWidget,
+    QMainWindow,
+    QHBoxLayout,
+    QVBoxLayout,
+    QLabel,
+    QPushButton,
+    QApplication,
+)
+from PyQt5.QtGui import QPalette, QColor
 
 # Only needed for access to command line arguments
 import sys
+import random
 
 
 class Color(QWidget):
     def __init__(self, color, *args, **kwargs):
         super(Color, self).__init__(*args, **kwargs)
         self.setAutoFillBackground(True)
+        self.setWindowTitle("he")
+
+        if color == None:
+            color = random.choice(
+                (
+                    "red",
+                    "blue",
+                    "green",
+                    "orange",
+                    "brown",
+                    "gray",
+                    "yellow",
+                    "purple",
+                )
+            )
 
         palette = self.palette()
         palette.setColor(QPalette.Window, QColor(color))
         self.setPalette(palette)
 
-        self.setMinimumWidth(100)
-        self.setMinimumHeight(100)
+        self.setMinimumWidth(10)
+        self.setMinimumHeight(10)
+
+
+class Box(Color):
+    def __init__(self, mainWindow, *args, **kwargs):
+        super(Box, self).__init__("blue", *args, **kwargs)
+
+    def setValue(self, value):
+        self.value = value
+
+
+class BoxArea(Color):
+    def __init__(self, mainWindow, *args, **kwargs):
+        super(BoxArea, self).__init__("lightgray", *args, **kwargs)
+
+        self.mainWindow = mainWindow
+
+    def resizeEvent(self, a0):
+        self.mainWindow.boxAreaSizeEvent(a0)
+
+        # width, height = a0.size().width() // self.size, a0.size().height() // self.size
+
+        # for row in range(self.size):
+        #     for column in range(self.size):
+        #         box = self.boxes.get((row, column))
+        #         if box:
+        #             box.setGeometry(QRect(row * width, column * height, width, height))
+
+        return super().resizeEvent(a0)
 
 
 # Subclass QMainWindow to customise your application's main window
@@ -28,38 +79,69 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("2048")
 
-        masterArea = QVBoxLayout()
-        cmdArea = QHBoxLayout()
+        self.size = 5
 
-        boxArea = Color("gray")
-        boxArea.setFixedWidth(500)
-        boxArea.setFixedHeight(500)
+        # main layout
+        mainLayout = QVBoxLayout()
 
-        masterArea.setStretchFactor()
-        masterArea.addLayout(cmdArea)
-        masterArea.addWidget(boxArea)
+        cmdLayout = QHBoxLayout()
+        self.boxArea = BoxArea(self)
 
-        cmdArea.addWidget(QLabel("Score: "))
-        cmdArea.addWidget(QLabel("1024"))
-        cmdArea.addWidget(QPushButton("New Game"))
+        mainLayout.addLayout(cmdLayout)
+        mainLayout.addWidget(boxArea)
 
-        self.size = 4
+        # cmd layout
+        self.scoreLabel = QLabel("Score: ")
+        self.scoreValue = QLabel("0")
+        self.newGame = QPushButton("New Game")
+
+        cmdLayout.addWidget(self.scoreLabel)
+        cmdLayout.addWidget(self.scoreValue)
+        cmdLayout.addWidget(self.newGame)
+
+        widget = QWidget()
+        widget.setLayout(mainLayout)
+        self.setCentralWidget(widget)
+
+    def boxAreaSizeEvent(self, a0):
+        width, height = a0.size().width() // self.size, a0.size().height() // self.size
 
         # for row in range(self.size):
         #     for column in range(self.size):
-        #         boxArea.addWidget(Color("red"))
+        #         box = self.boxes.get((row, column))
+        #         if box:
+        #             box.setGeometry(QRect(row * width, column * height, width, height))
 
-        # masterArea.addLayout(cmdArea)
-        # masterArea.setContentsMargins(0, 0, 0, 0)
-        # masterArea.setSpacing(20)
+    def initBoxes(self, size):
+        self.size = size
+        self.boxMatrix = {}
+        self.boxes = [Box(self.boxArea) for i in range(self.size * self.size)]
 
-        # masterArea.addWidget(Color("green"))
+    def randomPickBox(self):
+        locationList = (
+            (row, column)
+            for column in range(self.size)
+            for row in range(self.size)
+            if not self.boxMatrix.get((row, column))
+        )
+        if not locationList:
+            return False
 
-        widget = QWidget()
-        # widget.setFixedWidth(500)
-        # widget.setFixedHeight(500)
-        widget.setLayout(masterArea)
-        self.setCentralWidget(widget)
+        location = random.choice(locationList)
+        box = self.boxes.pop()
+        box.setValue(2)
+        self.boxMatrix.set(location, box)
+
+    def appearBox(self, box: Box, location: tuple):
+        box.setValue(2)
+        self.boxMatrix.set(location, box)
+        self.addAnimition()
+
+    def disappearBox(self, location):
+        pass
+
+    def addAnimition(self):
+        pass
 
 
 # You need one (and only one) QApplication instance per application.
